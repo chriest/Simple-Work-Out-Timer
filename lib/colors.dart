@@ -24,3 +24,4 @@ const greenGo = Color.fromARGB(255, 0, 255, 0);
 // END FLASHES
 
 const mainRed = Color.fromARGB(255, 255, 52, 52);
+const Color trans = Colors.transparent;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart'; // this
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:swot/themes.dart';
@@ -13,8 +13,9 @@ void main() {
   runApp(const MainApp());
 }
 
+// MAIN APP
 class MainApp extends StatelessWidget {
-  //MAIN
+
   const MainApp({super.key});
 
   @override
@@ -48,9 +49,11 @@ class MainAppState extends ChangeNotifier {
 
 }
 
+ // TIMER WIDGET
 class TimerScreen extends StatefulWidget {
-  const TimerScreen({super.key});
   
+  const TimerScreen({super.key});
+  // FONT SIZES
   static const double titleSize = 35;
   static const double timerSize = 116.0;
   static const double buttonTextSize = 37;
@@ -71,45 +74,49 @@ class TimerScreen extends StatefulWidget {
 
 class _TimerScreenState extends State<TimerScreen> {
   
+  // Timer Core Managers
   Timer? timerCore;
   Timer? milliTimer;
   Timer? flashTime;
+  // Default value TO CHANGE INTO PREFS
   int secs = 60;
+  //Timer Durations
   late Duration milliDur = const Duration(milliseconds: 900);
   late Duration flashDuration = const Duration(seconds: 2);
   late Duration timerDuration = Duration(seconds: secs);
+  // Utility bools
   bool cheato = false;
   bool cheato2 = false;
   bool visRedd = false;
   bool visY = false;
   bool visG = false;
   bool visGO = false;
-
-  int numSeries = 1;
-  int reps = 20;
-
   bool yellowVisible = false;
   bool greenishVisible = false;
   bool greenVisible = false;
   bool mute = false;
 
+  // Standard Card
+  int numSeries = 1;
+  int reps = 20;
+
+  
+  // Audio Block, to remake into separate class
+  final cache = AudioCache(prefix: 'alarms/alarm_5.mp3');
   final audio = AudioPlayer();
   static const countdownAlarm = "alarms/countdown_alarm_1.mp3";
   static const goAlarm = "alarms/alarm_5.mp3";
 
   
-  Color trans = Colors.transparent;
-
+  
+  //WIDGET NO CONTEXT FUNCS
 
   @override
   void initState() {
     super.initState();
 
   }
- 
-
   
-
   void stopTimer() {
     setState(() => timerCore?.cancel());
     resetTimer();
@@ -121,14 +128,6 @@ class _TimerScreenState extends State<TimerScreen> {
   void resetTimer() {
     setState(() => timerDuration = Duration(seconds: secs));
   }
-
-
-  void toggleGo() async {
-    setState(() {
-      
-    });
-  }
-
 
   void seriesReset () {
     setState(() {
@@ -160,31 +159,31 @@ class _TimerScreenState extends State<TimerScreen> {
     });
   }
 
-  
+  // KEY FOR DRAWER CALL
   final GlobalKey<ScaffoldState> _key = GlobalKey();
 
   @override
   Widget build(BuildContext context) { 
     String padder(int n) => n.toString().padLeft(2, '0');
 
-    final hours = padder(timerDuration.inHours%24);
+    //final hours = padder(timerDuration.inHours%24);
     final minutes = padder(timerDuration.inMinutes%60);
     final seconds = padder(timerDuration.inSeconds%60);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp
+    ]);
 
-    void _showDialog(Widget child) {
+    //CONTEXT FUNCS
+    void showDialog(Widget child) {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => Container(
         height: 218,
         padding: const EdgeInsets.only(top: 6.0),
-        // The bottom margin is provided to align the popup above the system
-        // navigation bar.
         margin: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        // Provide a background color for the popup.
         color: Theme.of(context).scaffoldBackgroundColor,
-        // Use a SafeArea widget to avoid system overlaps.
         child: SafeArea(
           top: false,
           child: child,
@@ -193,7 +192,7 @@ class _TimerScreenState extends State<TimerScreen> {
     );
   }
 
-    void _mutePress(){
+    void mutePress(){
       setState(() {
         if (mute==true) { 
           mute = false;
@@ -203,16 +202,13 @@ class _TimerScreenState extends State<TimerScreen> {
           audio.setVolume(0);
       }});
     }
-
-
-
-    //milliseconds flashing timer
+    
     void resetMilli() {
-    setState(() => milliDur = const Duration(milliseconds: 900));
-      }
+      setState(() => milliDur = const Duration(milliseconds: 900));
+  }
 
-  void setMilliDown() {
-    setState(() {
+    void setMilliDown() {
+      setState(() {
       final millis = milliDur.inMilliseconds - 450;
       if(millis==450){
         visRedd = visY = visG = false; 
@@ -227,16 +223,15 @@ class _TimerScreenState extends State<TimerScreen> {
       } else {
         milliDur = Duration(milliseconds: millis);
       }
-    });
-  }
+     });
+    }
 
-
-  void resetFla() {
+    void resetFla() {
     setState(() => flashDuration = const Duration(seconds: 2));
-      }
+    }
   
-  void setFlashes() {
-    setState(() {
+    void setFlashes() {
+      setState(() {
       final leftovers = flashDuration.inMilliseconds-100;
       if(visGO == true) {
         visGO = false;
@@ -253,147 +248,160 @@ class _TimerScreenState extends State<TimerScreen> {
       } else {
         flashDuration = Duration(milliseconds: leftovers);
       }
-    });
+      });
     
-  }
+    }
     // toggles
     void toggleRed() async {
-    setState(() {
+      setState(() {
       visRedd=true;
     });
     
     milliTimer = Timer.periodic(const Duration(milliseconds:450), (_) => setMilliDown());
   }
 
-   void toggleYellow() async {
-    setState(() {
+    void toggleYellow() async {
+      setState(() {
       visY=true;
-    });
-    milliTimer = Timer.periodic(const Duration(milliseconds:450), (_) => setMilliDown());
-  }
+       });
+      milliTimer = Timer.periodic(const Duration(milliseconds:450), (_) => setMilliDown());
+    }
 
-  void toggleGreenish() async {
-    setState(() {
+    void toggleGreenish() async {
+      setState(() {
       visG=true;
-    });
-    milliTimer = Timer.periodic(const Duration(milliseconds:450), (_) => setMilliDown());
-  }
+      });
+      milliTimer = Timer.periodic(const Duration(milliseconds:450), (_) => setMilliDown());
+    }
 
+    void toggleGo() {
+      setState(() {
+        visGO = true;
+      });
 
-  void toggleGo() {
-    setState(() {
-      visGO = true;
-    });
+      flashTime = Timer.periodic(const Duration(milliseconds: 100), (_) => setFlashes());
 
-    flashTime = Timer.periodic(const Duration(milliseconds: 100), (_) => setFlashes());
+    }
 
-  }
-
-  void playCd(String assetAudio)  async{
+    void playCd(String assetAudio)  async{
      await audio.play(AssetSource(assetAudio));
-  }
-
-  
-
-  
+    }
     // countdown main timer
-  void setCountDown() {
-    setState(() {
-      final seconds = timerDuration.inSeconds - 1;
-      //final minutes = timerDuration.inMinutes;
-      
-      if(seconds==3){
-        // red has to change here
-        //player.play(AssetSource("alarms/countdown_alarm_1.mp3"));
-        playCd(countdownAlarm);
-        HapticFeedback.heavyImpact;
-        toggleRed();
+    void setCountDown() {
+      setState(() {
+        final seconds = timerDuration.inSeconds - 1;
+        //final minutes = timerDuration.inMinutes;
         
-      }
-      if(seconds==2){
-        playCd(countdownAlarm);
-        HapticFeedback.heavyImpact;
-        toggleYellow();
+        if(seconds==3){
+          playCd(countdownAlarm);
+          HapticFeedback.heavyImpact();
+          toggleRed();
+        }
+
+        if(seconds==2){
+          playCd(countdownAlarm);
+          HapticFeedback.heavyImpact();
+          toggleYellow(); 
+        }
+
+        if(seconds==1){
+          playCd(countdownAlarm);
+          HapticFeedback.heavyImpact();
+          toggleGreenish();
+        }
+
+        if (seconds<1) {
+          playCd(goAlarm);
+          HapticFeedback.vibrate();
+          toggleGo();
+          stopTimer();
+          seriesIncrease();        
+        } else {
+          timerDuration = Duration( seconds: seconds);
+        }
         
-      }
-      if(seconds==1){
-        playCd(countdownAlarm);
-        HapticFeedback.heavyImpact;
-        toggleGreenish();
-        
-      }
-      if (seconds<1) {
-        playCd(goAlarm);
-        HapticFeedback.vibrate();
-        toggleGo();
-        stopTimer();
-        seriesIncrease();        
-      } else {
-        timerDuration = Duration( seconds: seconds);
-      }
-    });
+      });
   }
 
-  void startTimer() {
-    timerCore = Timer.periodic(const Duration(seconds:1), (_) => setCountDown());
-    setState(() {
-      cheato = true;
-    });
-  }
+    void startTimer() {
+      timerCore = Timer.periodic(const Duration(seconds:1), (_) => setCountDown());
+      setState(() {
+        cheato = true;
+      });
+    }
     
     return Stack(
        fit: StackFit.expand,
       children: <Widget>[
+        // ACTUAL BACKGROUND
         Visibility(
-        visible: true,
-        child: SizedBox(
-          child: Material(
-            color: Theme.of(context).scaffoldBackgroundColor,
+          visible: true,
+          child: SizedBox(
+            child: Material(
+              color: Theme.of(context).scaffoldBackgroundColor,
+            )
           )
-        )
-       ),
-       Visibility(
-        visible: visRedd,
-        child: const SizedBox(
-          child: Material(
-            color: redThree,
+        ),
+       
+        // RED
+        Visibility(
+          visible: visRedd,
+          child: const SizedBox(
+            child: Material(
+              color: redThree,
+            )
           )
-        )
-       ),
-       Visibility(
-        visible: visY,
-        child: const SizedBox(
-          child: Material(
-            color: ocraTwo,
+        ),
+        // YELLOW
+        Visibility(
+          visible: visY,
+          child: const SizedBox(
+            child: Material(
+              color: ocraTwo,
+            )
           )
-        )
-       ),
-       Visibility(
-        visible: visG,
-        child: const SizedBox(
-          child: Material(
-            color: greenishOne,
+        ),
+        // GREENY
+        Visibility(
+          visible: visG,
+          child: const SizedBox(
+            child: Material(
+              color: greenishOne,
+            )
           )
-        )
-       ),
-       Visibility(
-        visible: visGO,
-        child: const SizedBox(
-          child: Material(
-            color: greenGo,
+        ),
+        // GREEN
+        Visibility(
+          visible: visGO,
+          child: const SizedBox(
+            child: Material(
+              color: greenGo,
+            )
           )
-        )
-       ),
-        Scaffold( //MAIN
+        ),
+        
+        // TIMER SCREEN
+        Scaffold(
           key: _key,
-          drawer: Drawer(
+
+          drawer: 
+          Drawer(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             child: Padding(
               padding: const EdgeInsets.all(13),
               child: ListView(
                 children: [
-                   
-                  Row(
+                  // DRAWER TITLE
+                  Container(
+                    alignment: Alignment.center,
+                    child: const Text('Settings', style:
+                    TextStyle(fontFamily:'San Francisco', fontWeight:FontWeight.bold, fontSize:28)),
+                  ),
+                  const SizedBox(
+                    height:20
+                  ), 
+                  // DRAWER ITEMS
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text('N. Reps', style:
@@ -411,267 +419,387 @@ class _TimerScreenState extends State<TimerScreen> {
                       
                     ],
                   ),
-                  SizedBox(height:200),
-                  Center(child: Text('Arriverà altro nelle prossime versioni.'))
-                   
-                ]
+                  const SizedBox(height:200),
+                  const Center(child: Text('SALVE SIGNORA.'))
+                ],
               ),
-            )
+            ),
           ),
+
           backgroundColor: Colors.transparent,
-          body: SafeArea(
-              child: Column(
-          children: [
-         Padding(
-          padding: const EdgeInsets.only(top: 14.0, bottom: 10.0, left:22, right: 23),
-          child: Row(
-            textBaseline: TextBaseline.alphabetic,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 7),
-                child: IconButton(icon: const Icon(CupertinoIcons.settings), 
-                  iconSize: 35, 
-                  color: Theme.of(context).colorScheme.secondary,
-                  onPressed:() => _key.currentState!.openDrawer(),
-                        ),
-              ),
-              Expanded(
-                child: Center(
-                  child: Text(
-                    'SWOT',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontFamily: 'San Francisco',
-                      fontSize: TimerScreen.titleSize,
-                    ),
-                  ),
-                ),
-              ),
-                IconButton(icon: const Icon(CupertinoIcons.brightness), 
-                iconSize: 35, 
-                color: Theme.of(context).colorScheme.secondary,
-                onPressed: () {
-                      final provider =
-                      Provider.of<ThemeProvider>(context, listen: false);
-                      provider.toggleTheme();
-                    },
-                      ),
-              
-              ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 7, right: 20),        
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                icon:(mute==true?Icon(CupertinoIcons.speaker_slash):Icon(CupertinoIcons.speaker_2)), 
-                iconSize:35,
-                color: Theme.of(context).colorScheme.secondary,
-                onPressed: () => _mutePress(),)
-            ]
-          )
-        ),    
-        const Spacer(
-          flex: 4,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          textBaseline: TextBaseline.alphabetic,
-    
-          children: [
-            Text(minutes, 
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                    fontSize: TimerScreen.timerSize,
-                    fontFamily: 'San Fransisco Mono',
-                    fontWeight: FontWeight.bold)
-              ),
-            Text(':', 
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                    fontSize: TimerScreen.timerSize,
-                    fontFamily: 'San Francisco Reg',
-                    fontWeight: FontWeight.bold
-                    )
-              ),
-              Text(seconds, 
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                    fontSize: TimerScreen.timerSize,
-                    fontFamily: 'San Fransisco Mono',
-                    fontWeight: FontWeight.bold)
-              ),
-              ]
-        ),
-        const Spacer(flex: 2),
-        Material(
-          color: cheato==false?Theme.of(context).colorScheme.tertiary:Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(100),
-          child: GestureDetector(
-            onLongPressStart: (details) => longStart(),
-            onLongPressEnd: (details) => longEnd(),
-            child: InkWell(
-              onLongPress: () => seriesReset(),
-              onTap: () {
-                if (timerCore?.isActive == null || timerCore?.isActive == false){
-                    startTimer();
-                  } else {
-                    stopTimer();
-                  }
-                  HapticFeedback.mediumImpact();
-                  },
-              borderRadius: BorderRadius.circular(100),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 8, right: 20, left: 20),
-                child: cheato2==false ? (cheato==false ? Text('START', 
-                        style: TextStyle(
-                          fontSize: TimerScreen.buttonTextSize, 
-                          fontFamily:'San Francisco Reg',
-                          color: Theme.of(context).colorScheme.primary) ) : const Text('STOP', 
-                        style: TextStyle(
-                          fontSize: TimerScreen.buttonTextSize, 
-                          fontFamily:'San Francisco Reg',
-                          color: Color(0xFFFFFFFF)) )) : const Text('RESET', 
-                        style: TextStyle(
-                          fontSize: TimerScreen.buttonTextSize, 
-                          fontFamily:'San Francisco Reg',
-                          color: Color(0xFFFFFFFF)) ),
-              ),
-            ),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.all(20),
-            child: Column(children: [
-              Container(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0, top:13.0, bottom:0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Durata Timer:',
-                          style: TextStyle(color: Theme.of(context).colorScheme.scrim,
-                          fontFamily: 'San Francisco',
-                          fontSize: 17.5),),
-                      CupertinoButton(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          onPressed:() => _showDialog(
-                              CupertinoTimerPicker(
-                                mode: CupertinoTimerPickerMode.ms,
-                                initialTimerDuration: timerDuration,
-                                // This is called when the user changes the timer's
-                                // duration.
-                                onTimerDurationChanged: (Duration newDuration) {
-                                setState(() {
-                                   
-                                  timerDuration = newDuration;
-                                  secs = newDuration.inSeconds;});
-                        },
-                      ),
-                    ),
-                          child: Text( '${secs~/60}:${secs%60<10 ?'0${secs%60}':secs%60}', 
-                          style: TextStyle(color: Theme.of(context).colorScheme.scrim,
-                          fontFamily: 'San Francisco Mono',
-                          fontSize: 17.5)))
-                    ]),
-              ),
-            ],
-            ),
-            ),
-        Flexible(
-          flex: 22,
-          child: Container(
-            margin: const EdgeInsets.only(left: 28, right: 28),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  flex: 65,
-                  child: Column(
-                    //mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text('SERIE',
-                      style: TextStyle(
-                        fontFamily: 'San Francisco',
-                        fontSize: TimerScreen.seriesText,
-                        color: Theme.of(context).colorScheme.primaryContainer
-                      )),
-                      /*InkWell(
-                        onLongPress: () => seriesReset(),
-                        borderRadius: BorderRadius.circular(40),
-                        child: */ SizedBox(
-                          height: 130,
-                          width: 300,
-                          child: Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.only(top: 17.0),
-                            child: Text('$numSeries',
-                            style: TextStyle(
-                              fontFamily: 'San Francisco Num',
-                              fontSize: TimerScreen.seriesNum,
-                              color: Theme.of(context).colorScheme.primaryContainer,
-                            )),
+          body: 
+          SafeArea(
+            child: 
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 14.0, bottom: 10.0, left:22, right: 23),
+                    child: 
+                      Row(
+                        textBaseline: TextBaseline.alphabetic,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 7),
+                            child: 
+                              IconButton(
+                                icon: const Icon(CupertinoIcons.settings), 
+                                iconSize: 35, 
+                                color: Theme.of(context).colorScheme.secondary,
+                                onPressed:() => _key.currentState!.openDrawer(),
+                              ),
                           ),
-                        /*),*/
-                      )
-                    ],
+                          Expanded(
+                            child: 
+                              Center(
+                                child: 
+                                  Text(
+                                    'SWOT',
+                                    style: 
+                                      TextStyle(
+                                        color: Theme.of(context).colorScheme.secondary,
+                                        fontFamily: 'San Francisco',
+                                        fontSize: TimerScreen.titleSize,
+                                      ),
+                                  ),
+                              ),
+                          ),
+                          IconButton(
+                            icon: 
+                              const Icon(
+                                      CupertinoIcons.brightness
+                                    ), 
+                            iconSize: 35, 
+                            color: Theme.of(context).colorScheme.secondary,
+                            onPressed: () {
+                              final provider = Provider.of<ThemeProvider>(context, listen: false);
+                              provider.toggleTheme();
+                            },
+                          ),    
+                        ],
+                      ),
                   ),
-                ),
-                VerticalDivider(
-                  indent: TimerScreen.vertCard,
-                  endIndent: TimerScreen.vertCard,
-                  color: Theme.of(context).colorScheme.scrim
-                ),
-                Expanded(
-                  flex:35,
-                  child: Column(
+                  Padding(
+                    padding: const EdgeInsets.only(top: 7, right: 20),        
+                    child: 
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon:(
+                              mute == true ? 
+                                const Icon(
+                                        CupertinoIcons.speaker_slash
+                                      )
+                              :
+                                const Icon(
+                                        CupertinoIcons.speaker_2
+                                      )
+                            ), 
+                            iconSize:35,
+                            color: Theme.of(context).colorScheme.secondary,
+                            onPressed: () => mutePress(),
+                          ),
+                        ],
+                      ),
+                  ),    
+                  const Spacer(
+                    flex: 4,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    textBaseline: TextBaseline.alphabetic,
                     children: [
-                      Text('REPS',
-                      style: TextStyle(
-                        fontFamily: 'San Francisco',
-                        fontSize: TimerScreen.repsText,
-                        color: Theme.of(context).colorScheme.scrim),),
-                      Text('$reps',
-                      style: TextStyle(
-                        fontFamily: 'San Francisco Light',
-                        fontSize: TimerScreen.repsNum,
-                        color: Theme.of(context).colorScheme.scrim
-                      )),
-                    ],
+                      Text(
+                        minutes, 
+                        style: 
+                          TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontSize: TimerScreen.timerSize,
+                            fontFamily: 'San Fransisco Mono',
+                            fontWeight: FontWeight.bold
+                          )
+                      ),
+                      Text(
+                        ':', 
+                        style: 
+                          TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontSize: TimerScreen.timerSize,
+                            fontFamily: 'San Francisco Reg',
+                            fontWeight: FontWeight.bold
+                          ),
+                      ),
+                      Text(
+                        seconds, 
+                        style: 
+                          TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontSize: TimerScreen.timerSize,
+                            fontFamily: 'San Fransisco Mono',
+                            fontWeight: FontWeight.bold)
+                      ),
+                        ]
                   ),
-                )
-              ]
-            ),
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.only(left:8.0, right:8),
-          child: Placeholder(fallbackHeight: 55),
-        ),
-        Container(
-          padding: const EdgeInsets.only(left: 0, right: 0),
-          margin: const EdgeInsets.only(top:10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const SizedBox(
-                width: 50,
+                  const Spacer(
+                          flex: 2
+                  ),
+                  Material(
+                    color: 
+                      cheato == false ? 
+                        Theme.of(context).colorScheme.tertiary
+                      :
+                      Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(100),
+                    child: 
+                      GestureDetector(
+                        onLongPressStart: (details) => longStart(),
+                        onLongPressEnd: (details) => longEnd(),
+                        child: 
+                          InkWell(
+                            onLongPress: () { 
+                              seriesReset();
+                              HapticFeedback.mediumImpact();
+                              },
+                            onTap: () {
+                              if (timerCore?.isActive == null || timerCore?.isActive == false){
+                                startTimer();
+                              } else {
+                                  stopTimer();
+                                }
+                            /*HapticFeedback.mediumImpact();*/
+                            },
+                            borderRadius: BorderRadius.circular(100),
+                            child: 
+                              Padding(
+                                padding: 
+                                  const EdgeInsets.only(top: 8, bottom: 8, right: 20, left: 20),
+                                child: 
+                                  cheato2 == false ? 
+                                    (cheato==false ? 
+                                      Text(
+                                        'START', 
+                                        style: 
+                                          TextStyle(
+                                            fontSize: TimerScreen.buttonTextSize, 
+                                            fontFamily:'San Francisco Reg',
+                                            color: Theme.of(context).colorScheme.primary) 
+                                      )
+                                    : 
+                                    const Text(
+                                            'STOP', 
+                                            style: 
+                                              TextStyle(
+                                                fontSize: TimerScreen.buttonTextSize, 
+                                                fontFamily:'San Francisco Reg',
+                                                color: Color(0xFFFFFFFF)
+                                              )
+                                          )
+                                    )
+                                  : 
+                                  const Text(
+                                          'RESET', 
+                                          style: 
+                                            TextStyle(
+                                              fontSize: TimerScreen.buttonTextSize, 
+                                              fontFamily:'San Francisco Reg',
+                                              color: Color(0xFFFFFFFF)) 
+                                        ),
+                              ),
+                          ),
+                      ),
+                  ),
+                  Container(
+                    margin: 
+                      const EdgeInsets.all(20),
+                    child: 
+                      Column(
+                        children: [
+                          Container(
+                            padding: 
+                              const EdgeInsets.only(left: 8.0, right: 8.0, top:13.0, bottom:0),
+                            child: 
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Durata Timer:',
+                                    style: 
+                                      TextStyle(
+                                        color: Theme.of(context).colorScheme.scrim,
+                                        fontFamily: 'San Francisco',
+                                        fontSize: 17.5
+                                      ),
+                                  ),
+                                  CupertinoButton(
+                                    padding: 
+                                      const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    onPressed:() => showDialog(
+                                                      CupertinoTimerPicker(
+                                                        mode: CupertinoTimerPickerMode.ms,
+                                                        initialTimerDuration: timerDuration,
+                                                        onTimerDurationChanged: (Duration newDuration) {
+                                                          setState(() {
+                                                            timerDuration = newDuration;
+                                                            secs = newDuration.inSeconds;
+                                                            }
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                    child: 
+                                      Text( 
+                                        '${secs~/60}:${secs%60<10 ?'0${secs%60}':secs%60}', 
+                                        style: 
+                                          TextStyle(
+                                            color: Theme.of(context).colorScheme.scrim,
+                                            fontFamily: 'San Francisco Mono',
+                                            fontSize: 17.5
+                                          ),
+                                      ),
+                                  ),
+                                ],
+                              ),
+                          ),
+                        ],
+                      ),
+                  ),
+                  Flexible(
+                    flex: 22,
+                    child: 
+                      Container(
+                        margin: 
+                          const EdgeInsets.only(left: 28, right: 28),
+                        child: 
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                flex: 65,
+                                child: 
+                                  Column(
+                                    //mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'SERIE',
+                                        style: 
+                                          TextStyle(
+                                            fontFamily: 'San Francisco',
+                                            fontSize: TimerScreen.seriesText,
+                                            color: Theme.of(context).colorScheme.primaryContainer
+                                          ),
+                                      ),
+                                      /*InkWell(
+                                        onLongPress: () => seriesReset(),
+                                        borderRadius: BorderRadius.circular(40),
+                                        child: */ 
+                                      SizedBox(
+                                        height: 130,
+                                        width: 300,
+                                        child: 
+                                          Container(
+                                            alignment: 
+                                              Alignment.center,
+                                            padding: 
+                                              const EdgeInsets.only(top: 17.0),
+                                            child: 
+                                              Text(
+                                                '$numSeries',
+                                                style: 
+                                                  TextStyle(
+                                                    fontFamily: 'San Francisco Num',
+                                                    fontSize: TimerScreen.seriesNum,
+                                                    color: Theme.of(context).colorScheme.primaryContainer,
+                                                  ),
+                                              ),
+                                          ),
+                                      /*),*/
+                                      ),
+                                    ],
+                                  ),
+                              ),
+                              VerticalDivider(
+                                indent: TimerScreen.vertCard,
+                                endIndent: TimerScreen.vertCard,
+                                color: Theme.of(context).colorScheme.scrim
+                              ),
+                              Expanded(
+                                flex:35,
+                                child: 
+                                  Column(
+                                    children: [
+                                      Text(
+                                        'REPS',
+                                        style: 
+                                          TextStyle(
+                                            fontFamily: 'San Francisco',
+                                            fontSize: TimerScreen.repsText,
+                                            color: Theme.of(context).colorScheme.scrim
+                                          ),
+                                      ),
+                                      Text(
+                                        '$reps',
+                                        style: 
+                                          TextStyle(
+                                            fontFamily: 'San Francisco Light',
+                                            fontSize: TimerScreen.repsNum,
+                                            color: Theme.of(context).colorScheme.scrim,
+                                          ),
+                                      ),
+                                    ],
+                                  ),
+                              ),
+                            ],
+                          ),
+                      ),
+                  ),
+                  const Padding(
+                          padding: 
+                            EdgeInsets.only(left:8.0, right:8),
+                          child: 
+                            Placeholder(
+                              fallbackHeight: 55
+                            ),
+                  ),
+                  Container(
+                    padding: 
+                      const EdgeInsets.only(left: 0, right: 0),
+                    margin: 
+                      const EdgeInsets.only(top:10),
+                    child: 
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const SizedBox(
+                                  width: 50,
+                          ),
+                          Text(
+                            'Hericon Ideas © 2023',
+                            style: 
+                              TextStyle(
+                                fontSize: TimerScreen.brandText, 
+                                fontFamily: 'San Francisco',
+                              color: Theme.of(context).colorScheme.secondary
+                              ),
+                          ),
+                          Text(
+                            '0.0.1 alpha', 
+                            style: 
+                              TextStyle(
+                                fontSize: TimerScreen.versionText, 
+                                fontFamily: 'San Francisco',
+                                color: Theme.of(context).colorScheme.secondary
+                              ),
+                          ),
+                        ],
+                      ),
+                  ),
+                ],
               ),
-              Text('Hericon Ideas © 2023',
-                  style: TextStyle(fontSize: TimerScreen.brandText, fontFamily: 'San Francisco',
-                  color: Theme.of(context).colorScheme.secondary)),
-              Text('0.0.1 alpha', style: TextStyle(fontSize: TimerScreen.versionText, fontFamily: 'San Francisco',
-              color: Theme.of(context).colorScheme.secondary)),
-            ],
           ),
         ),
       ],
-      ),
-      ),
-      ),]
     );
   }
 }
